@@ -76,6 +76,9 @@ public class SlidingTabActivity extends AppCompatActivity implements OnTabSelect
         tabLayout_8.setViewPager(vp, mTitles, this, mFragments);
         tabLayout_9.setViewPager(vp);
         tabLayout_10.setViewPager(vp);
+        tabLayout_7.setIndicatorColors(new int[]{getResources().getColor(R.color.colorPrimary), getResources().getColor(R.color.colorAccent)});
+        tabLayout_5.setIndicatorColors(new int[]{Color.BLUE, Color.RED});
+        tabLayout_9.setIndicatorColors(new int[]{Color.BLUE, Color.RED});
 
         vp.setCurrentItem(4);
 

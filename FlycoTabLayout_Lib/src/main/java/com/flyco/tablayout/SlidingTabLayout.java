@@ -20,6 +20,9 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.IntegerRes;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -64,6 +67,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
 
     /** indicator */
     private int mIndicatorColor;
+    private @ColorInt int[] mIndicatorColors;
     private float mIndicatorHeight;
     private float mIndicatorWidth;
     private float mIndicatorCornerRadius;
@@ -97,6 +101,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
     private int mLastScrollX;
     private int mHeight;
     private boolean mSnapOnTabClick;
+    private GradientDrawable.Orientation orientation = GradientDrawable.Orientation.LEFT_RIGHT;
 
     public SlidingTabLayout(Context context) {
         this(context, null, 0);
@@ -180,6 +185,16 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         this.mViewPager.removeOnPageChangeListener(this);
         this.mViewPager.addOnPageChangeListener(this);
         notifyDataSetChanged();
+    }
+
+    public void setIndicatorColors(@NonNull @ColorInt int[] mIndicatorColors) {
+        this.mIndicatorColors = mIndicatorColors;
+        invalidate();
+    }
+
+    public void setOrientation(@NonNull GradientDrawable.Orientation orientation) {
+        this.orientation = orientation;
+        invalidate();
     }
 
     /** 关联ViewPager,用于不想在ViewPager适配器中设置titles数据的情况 */
@@ -490,8 +505,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
                 if (mIndicatorCornerRadius < 0 || mIndicatorCornerRadius > mIndicatorHeight / 2) {
                     mIndicatorCornerRadius = mIndicatorHeight / 2;
                 }
-
-                mIndicatorDrawable.setColor(mIndicatorColor);
+                updateIndicatorDrawable();
                 mIndicatorDrawable.setBounds(paddingLeft + (int) mIndicatorMarginLeft + mIndicatorRect.left,
                         (int) mIndicatorMarginTop, (int) (paddingLeft + mIndicatorRect.right - mIndicatorMarginRight),
                         (int) (mIndicatorMarginTop + mIndicatorHeight));
@@ -505,8 +519,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
                         mIndicatorRect.right + getPaddingLeft(), getHeight(), mRectPaint);*/
 
             if (mIndicatorHeight > 0) {
-                mIndicatorDrawable.setColor(mIndicatorColor);
-
+                updateIndicatorDrawable();
                 if (mIndicatorGravity == Gravity.BOTTOM) {
                     mIndicatorDrawable.setBounds(paddingLeft + (int) mIndicatorMarginLeft + mIndicatorRect.left,
                             height - (int) mIndicatorHeight - (int) mIndicatorMarginBottom,
@@ -521,6 +534,15 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
                 mIndicatorDrawable.setCornerRadius(mIndicatorCornerRadius);
                 mIndicatorDrawable.draw(canvas);
             }
+        }
+    }
+
+    private void updateIndicatorDrawable() {
+        if (mIndicatorColors == null || mIndicatorColors.length == 0) {
+            mIndicatorDrawable.setColor(mIndicatorColor);
+        } else {
+            mIndicatorDrawable.setOrientation(orientation);
+            mIndicatorDrawable.setColors(mIndicatorColors);
         }
     }
 
